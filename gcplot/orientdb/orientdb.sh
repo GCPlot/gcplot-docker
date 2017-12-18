@@ -11,6 +11,7 @@
 ORIENTDB_DIR="/opt/orientdb"
 ORIENTDB_USER="orientdb"
 LOG_DIR="/var/log/orientdb"
+export ORIENTDB_OPTS_MEMORY="-Xms{ORIENTDB_MEMORY} -Xmx{ORIENTDB_MEMORY}"
 
 usage() {
 	echo "Usage: `basename $0`: <start|stop|status>"

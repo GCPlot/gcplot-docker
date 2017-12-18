@@ -3,7 +3,7 @@ SERVICE_NAME=gcserver
 PATH_TO_JAR=/home/gcserver/lib/bootstrap.jar
 PID_PATH_NAME=/tmp/gcserver.pid
 USER=gcserver
-ARGS='-server -Xmx1G -Xms1G -XX:+DisableExplicitGC -XX:+PerfDisableSharedMem -XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:+HeapDumpOnOutOfMemoryError -XX:+UnlockDiagnosticVMOptions'
+ARGS='-server -Xmx{GCPLOT_MEMORY} -Xms{GCPLOT_MEMORY} -XX:+DisableExplicitGC -XX:+PerfDisableSharedMem -XX:+UnlockExperimentalVMOptions -XX:+HeapDumpOnOutOfMemoryError -XX:+UnlockDiagnosticVMOptions'
 
 function start_service() {
   echo "Starting $SERVICE_NAME ..."

@@ -8,6 +8,10 @@ ENV GCPLOT_VERSION=2.0
 ENV CASSANDRA_VERSION=311x
 ENV ORIENTDB_VERSION=2.2.13
 
+ARG GCPLOT_MEMORY=512m
+ARG ORIENTDB_MEMORY=256m
+ARG CASSANDRA_MEMORY=1g
+
 # Install packages and create appropriate user
 
 RUN \
@@ -26,6 +30,10 @@ RUN \
 COPY gcserver/logback.xml /home/gcserver/config
 COPY gcserver/gcplot.properties /home/gcserver/config
 COPY gcserver/gcserver /etc/init.d
+
+RUN sed -i "s/{GCPLOT_MEMORY}/$GCPLOT_MEMORY/g" /etc/init.d/gcserver \
+  && chmod 755 /etc/init.d/gcserver \
+  && chmod -R 755 /home/gcserver/config/*
 
 RUN \
   wget "https://downloads.gcplot.com/artifacts/gcserver/${GCPLOT_VERSION}/com.gcplot.web-${GCPLOT_VERSION}-all.jar" -O /home/gcserver/lib/bootstrap.jar \
@@ -52,7 +60,8 @@ COPY orientdb/orientdb-server-log.properties /opt/orientdb/config/orientdb-serve
 COPY orientdb/orientdb.sh /opt/orientdb/bin/orientdb.sh
 
 RUN cp /opt/orientdb/bin/orientdb.sh /etc/init.d/orientdb \
-  && chmod 755 /etc/init.d/orientdb
+  && chmod 755 /etc/init.d/orientdb \
+  && sed -i "s/{ORIENTDB_MEMORY}/$ORIENTDB_MEMORY/g" /etc/init.d/orientdb
 
 # Install Cassandra
 
@@ -66,9 +75,12 @@ COPY cassandra/cassandra-rackdc.properties /etc/cassandra/cassandra-rackdc.prope
 COPY cassandra/cassandra-topology.properties /etc/cassandra/cassandra-topology.properties
 COPY cassandra/cassandra.yaml /etc/cassandra/cassandra.yaml
 COPY cassandra/jvm.properties /etc/cassandra/jvm.options
+COPY cassandra/cdb.cql /etc/cassandra/cdb.cql
 
 COPY start.sh /start.sh
-RUN chmod 755 /start.sh
+RUN sed -i "s/{CASSANDRA_MEMORY}/$CASSANDRA_MEMORY/g" /etc/cassandra/jvm.options \
+  && chmod 755 /start.sh
 
+VOLUME ["/var/lib/cassandra", "/var/lib/orientdb"]
 EXPOSE 2480
 CMD ["/start.sh"]
