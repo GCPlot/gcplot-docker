@@ -1,0 +1,53 @@
+#!/bin/bash
+SERVICE_NAME=gcserver
+PATH_TO_JAR=/home/gcserver/lib/bootstrap.jar
+PID_PATH_NAME=/tmp/gcserver.pid
+USER=gcserver
+ARGS='-server -Xmx1G -Xms1G -XX:+DisableExplicitGC -XX:+PerfDisableSharedMem -XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:+HeapDumpOnOutOfMemoryError -XX:+UnlockDiagnosticVMOptions'
+
+function start_service() {
+  echo "Starting $SERVICE_NAME ..."
+  if [ ! -f $PID_PATH_NAME ]; then
+      su $USER -c "nohup java $ARGS -Dcurrent.host.name=$HOSTNAME -Dvertx.cacheDirBase=/tmp -Dlogback.configurationFile=/home/gcserver/config/logback.xml -jar $PATH_TO_JAR -cfg /home/gcserver/config >> /dev/null & echo \$! > $PID_PATH_NAME"
+      sleep 5
+      echo "$SERVICE_NAME started ..."
+  else
+      echo "$SERVICE_NAME is already running ..."
+  fi
+}
+
+function stop_service() {
+  if [ -f $PID_PATH_NAME ]; then
+      PID=$(cat $PID_PATH_NAME);
+      echo "$SERVICE_NAME stoping ..."
+      echo "$SERVICE_NAME killing $PID ..."
+      kill $PID;
+      wait $PID;
+      echo "$SERVICE_NAME stopped ..."
+      rm -rf $PID_PATH_NAME
+      sleep 5
+  else
+      echo "$SERVICE_NAME is not running ..."
+  fi
+}
+
+case $1 in
+    start)
+        start_service
+    ;;
+    stop)
+        stop_service
+    ;;
+    restart)
+        stop_service
+        start_service
+    ;;
+    status)
+        if [ -f $PID_PATH_NAME ]; then
+          PID=$(cat $PID_PATH_NAME);
+          echo "Started $PID."
+        else
+          echo "Not started."
+        fi
+    ;;
+esac

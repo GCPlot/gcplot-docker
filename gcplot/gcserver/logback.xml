@@ -1,0 +1,43 @@
+<configuration>
+    <appender name="FILE_DEBUG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <prudent>true</prudent>
+        <encoder>
+            <pattern>%d{yyyy/MM/dd HH:mm:ss.SSS} %p [%c{1}] %m%n</pattern>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>/home/gcserver/logs/app.debug.%d{yyyy-MM-dd}.log</fileNamePattern>
+
+            <!-- keep 21 days' worth of history capped at 10GB total size -->
+            <maxHistory>31</maxHistory>
+            <totalSizeCap>30GB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="ANALYTICS-FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+       <prudent>true</prudent>
+        <encoder>
+            <pattern>%d{HH:mm:ss} %p [%c{1}] %m%n</pattern>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>/home/gcserver/logs/analytics.%d{yyyy-MM-dd}.log</fileNamePattern>
+
+            <!-- keep 21 days' worth of history capped at 10GB total size -->
+            <maxHistory>31</maxHistory>
+            <totalSizeCap>20GB</totalSizeCap>
+        </rollingPolicy>
+    </appender>
+
+    <logger name="org.apache.http" level="INFO"/>
+    <logger name="analytics" level="DEBUG" additivity="false">
+        <appender-ref ref="ANALYTICS-FILE"/>
+    </logger>
+
+    <root level="debug">
+        <appender-ref ref="FILE_DEBUG" />
+    </root>
+    <!-- <root level="INFO">
+        <appender-ref ref="FILE_INFO" />
+    </root> -->
+</configuration>
