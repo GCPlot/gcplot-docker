@@ -82,5 +82,5 @@ RUN sed -i "s/{CASSANDRA_MEMORY}/$CASSANDRA_MEMORY/g" /etc/cassandra/jvm.options
   && chmod 755 /start.sh
 
 VOLUME ["/var/lib/cassandra", "/var/lib/orientdb"]
-EXPOSE 2480
+EXPOSE 2480 9091
 CMD ["/start.sh"]

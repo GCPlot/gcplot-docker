@@ -44,4 +44,12 @@ service gcserver start
 
 echo "GCPlot instance is initialized"
 
+while [ $(grep "Trying to reload configuration from main DB" /home/gcserver/logs/app.debug.*.log | wc -l) -eq "0" ]; do
+  sleep 0.1
+done
+
+echo "Registering admin user in GCPlot"
+
+curl 127.0.0.1:9091/user/register_admin
+
 tail -F /home/gcserver/logs/app.debug.*.log
