@@ -48,8 +48,12 @@ while [ $(grep "Trying to reload configuration from main DB" /home/gcserver/logs
   sleep 0.1
 done
 
-echo "Registering admin user in GCPlot"
+echo "Registering admin user in GCPlot ..."
 
 curl 127.0.0.1:9091/user/register_admin
+
+echo "Starting nginx service ..."
+
+service nginx start
 
 tail -F /home/gcserver/logs/app.debug.*.log

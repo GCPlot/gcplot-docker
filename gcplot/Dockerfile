@@ -76,11 +76,22 @@ COPY cassandra/cassandra-topology.properties /etc/cassandra/cassandra-topology.p
 COPY cassandra/cassandra.yaml /etc/cassandra/cassandra.yaml
 COPY cassandra/jvm.properties /etc/cassandra/jvm.options
 COPY cassandra/cdb.cql /etc/cassandra/cdb.cql
-
 COPY start.sh /start.sh
+
 RUN sed -i "s/{CASSANDRA_MEMORY}/$CASSANDRA_MEMORY/g" /etc/cassandra/jvm.options \
   && chmod 755 /start.sh
 
+# Install UI
+
+
+
+# Configuring nginx
+
+COPY nginx/gcplot.conf /etc/nginx/sites-available/gcplot.conf
+RUN ln -s /etc/nginx/sites-available/gcplot.conf /etc/nginx/sites-enabled/gcplot.conf \
+  && rm -rf /etc/nginx/sites-enabled/default \
+  && rm -rf /etc/nginx/sites-available/default
+
 VOLUME ["/var/lib/cassandra", "/var/lib/orientdb"]
-EXPOSE 2480 9091
+EXPOSE 2480 9090
 CMD ["/start.sh"]
