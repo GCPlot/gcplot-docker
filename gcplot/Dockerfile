@@ -83,15 +83,23 @@ RUN sed -i "s/{CASSANDRA_MEMORY}/$CASSANDRA_MEMORY/g" /etc/cassandra/jvm.options
 
 # Install UI
 
-
+RUN wget "https://downloads.gcplot.com/artifacts/ui/$GCPLOT_VERSION/gcplot-ui-$GCPLOT_VERSION.tar.gz" -O /tmp/gcplot-ui.tar.gz \
+  && tar -xvzf /tmp/gcplot-ui.tar.gz -C /tmp \
+  && sed -i "s/\${CACHE_BUSTER}/$(date +%s)/g" /tmp/dist/index.html \
+  && mkdir /var/www/app \
+  && mkdir /var/www/landing \
+  && mv /tmp/dist/* /var/www/app \
+  && mv /tmp/landing/* /var/www/landing \
+  && chmod -R 755 /var/www/*
 
 # Configuring nginx
 
 COPY nginx/gcplot.conf /etc/nginx/sites-available/gcplot.conf
+COPY nginx/nginx /etc/nginx/nginx.conf
 RUN ln -s /etc/nginx/sites-available/gcplot.conf /etc/nginx/sites-enabled/gcplot.conf \
   && rm -rf /etc/nginx/sites-enabled/default \
   && rm -rf /etc/nginx/sites-available/default
 
 VOLUME ["/var/lib/cassandra", "/var/lib/orientdb"]
-EXPOSE 2480 9090
+EXPOSE 2480 80
 CMD ["/start.sh"]
