@@ -2,6 +2,10 @@
 
 # Start & Init OrientDB
 
+sed -i "s/{GCPLOT_MEMORY}/$GCPLOT_MEMORY/g" /etc/init.d/gcserver \
+  && sed -i "s/{ORIENTDB_MEMORY}/$ORIENTDB_MEMORY/g" /etc/init.d/orientdb \
+  && sed -i "s/{CASSANDRA_MEMORY}/$CASSANDRA_MEMORY/g" /etc/cassandra/jvm.options
+
 echo "Starting OrientDB ..."
 
 service orientdb start
