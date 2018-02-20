@@ -7,6 +7,7 @@ ARGS='-server -Xmx{GCPLOT_MEMORY} -Xms{GCPLOT_MEMORY} -XX:+DisableExplicitGC -XX
 
 function start_service() {
   echo "Starting $SERVICE_NAME ..."
+  stop_service
   if [ ! -f $PID_PATH_NAME ]; then
       su $USER -c "nohup java $ARGS -Dcurrent.host.name=$HOSTNAME -Dvertx.cacheDirBase=/tmp -Dlogback.configurationFile=/home/gcserver/config/logback.xml -jar $PATH_TO_JAR -cfg /home/gcserver/config >> /dev/null & echo \$! > $PID_PATH_NAME"
       sleep 5
